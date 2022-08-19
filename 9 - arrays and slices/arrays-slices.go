@@ -41,4 +41,11 @@ func main() {
 	slice = append(slice, 9)
 	fmt.Println(slice)
 
+	//cria um slice a partir de um array
+	//fazendo referência para o valor do array
+	slice2 := array2[1:3]
+	fmt.Println(slice2)
+
+	array2[1] = "Alterações"
+	fmt.Println(slice2)
 }

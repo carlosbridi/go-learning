@@ -48,4 +48,18 @@ func main() {
 
 	array2[1] = "Alterações"
 	fmt.Println(slice2)
+
+	fmt.Println("---------")
+	//Arrays internos
+	//Make aloca memória
+	slice3 := make([]float32, 10, 11)
+	fmt.Println(slice3)
+	fmt.Println(len(slice3))
+	fmt.Println(cap(slice3))
+
+	slice3 = append(slice3, 20)
+	slice3 = append(slice3, 22)
+
+	fmt.Println(len(slice3))
+	fmt.Println(cap(slice3))
 }

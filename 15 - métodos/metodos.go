@@ -15,6 +15,7 @@ func (u usuario) salvar() {
 	fmt.Printf("Salvando os dados do usuário: %s no banco de dados\n", u.name)
 }
 
+//Modificar dados do usuário deve ser passado a instância/ponteiro do objeto para refletir no objeto em questão
 func (u *usuario) fazerAniversario() {
 	u.idade++
 }

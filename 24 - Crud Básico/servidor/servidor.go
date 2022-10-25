@@ -64,6 +64,41 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(fmt.Sprintf("Usuário inserido com sucesso: %d", idInserido)))
 }
 
+func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
+
+	db, erro := banco.Conectar()
+
+	if erro != nil {
+		w.Write([]byte("Erro ao conectar com banco de dados"))
+		return
+	}
+
+	defer db.Close()
+
+	linha, erro := db.Query("select * from usuarios")
+
+	if erro != nil {
+		w.Write([]byte("Erro ao lista usuarios"))
+		return
+	}
+
+	var usuarios []usuario
+	for linha.Next() {
+		var usuario usuario
+		if erro := linha.Scan(&usuario.ID, &usuario.Nome, &usuario.Email); erro != nil {
+			w.Write([]byte("Erro ao escanear usuarios"))
+		}
+
+		usuarios = append(usuarios, usuario)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if erro := json.NewEncoder(w).Encode(usuarios); erro != nil {
+		w.Write([]byte("Erro ao encodar usuários"))
+		return
+	}
+}
+
 func BuscandoUsuario(w http.ResponseWriter, r *http.Request) {
 	parametros := mux.Vars(r)
 
@@ -149,4 +184,37 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+
+	ID, erro := strconv.ParseUint(parametros["id"], 10, 32)
+
+	if erro != nil {
+		w.Write([]byte("Erro ao converter parametro para inteiro"))
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		w.Write([]byte("Erro ao conectar ao banco de dados"))
+		return
+	}
+	defer db.Close()
+
+	statement, erro := db.Prepare("delete from usuarios where id = ?")
+	if erro != nil {
+		w.Write([]byte("Erro ao preparar statement"))
+		return
+	}
+
+	if _, erro := statement.Exec(ID); erro != nil {
+		w.Write([]byte("Erro ao apagar os registros"))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	//w.Write([]byte(fmt.Sprintf("Quantidades de registros excluídos: %d", rows.RowsAffected())))
+
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"modulo/auxiliar"
+	"mode/auxiliar"
 )
 
 func main() {
